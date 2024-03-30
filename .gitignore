@@ -1,5 +1,6 @@
 Unzip-and-zip-examples/.gradle
 Unzip-and-zip-examples/build/
+Unzip-and-zip-examples/.idea
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
