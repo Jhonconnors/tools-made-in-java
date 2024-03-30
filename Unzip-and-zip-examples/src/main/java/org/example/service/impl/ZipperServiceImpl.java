@@ -1,11 +1,14 @@
 package org.example.service.impl;
 
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 import org.example.service.ZipperService;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -15,6 +18,7 @@ public class ZipperServiceImpl implements ZipperService {
         File dir = new File( destDir ) ;
         // creating an output directory if it doesn't exist already
         if( !dir.exists( ) ) dir.mkdirs( ) ;
+
         FileInputStream FiS ;
         // buffer to read and write data in the file
         byte[ ] buffer = new byte[ 1024 ] ;
@@ -44,6 +48,63 @@ public class ZipperServiceImpl implements ZipperService {
             FiS.close( ) ;
         } catch ( IOException e ) {
             e.printStackTrace( ) ;
+        }
+    }
+
+    @Override
+    public void unzipWithPassword(String zipFilePath, String destDir, String password) {
+        final FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("N/A", "zip");
+        //Folder where zip file is present
+        File file = new File(zipFilePath);
+        try (ZipFile zipFile = new ZipFile(file)) {
+            if (extensionFilter.accept(file)) {
+                if (zipFile.isEncrypted()) {
+                    //Your ZIP password
+                    zipFile.setPassword(password.toCharArray());
+                }
+                List<FileHeader> fileHeaderList = zipFile.getFileHeaders();
+
+                for (FileHeader fileHeader : fileHeaderList) {
+                    //Path where you want to Extract
+                    zipFile.extractFile(fileHeader, destDir);
+                    System.out.println("Extracted");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Please Try Again");
+        }
+    }
+
+    //Use digits to decompress example for 4 digits 9999
+    //Only use with numeric keys whose digits you know.
+    //This method uses recursion
+    @Override
+    public void unzipDecryptPassWithDigits(String zipFilePath, String destDir, Integer digits) {
+        final FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("N/A", "zip");
+        //Folder where zip file is present
+        File file = new File(zipFilePath);
+        if (digits !=0 || digits ==null){
+            String pass = digits.toString();
+            try (ZipFile zipFile = new ZipFile(file)) {
+                if (extensionFilter.accept(file)) {
+                    if (zipFile.isEncrypted()) {
+                        //Your ZIP password
+                        zipFile.setPassword(pass.toCharArray());
+                    }
+                    List<FileHeader> fileHeaderList = zipFile.getFileHeaders();
+
+                    for (FileHeader fileHeader : fileHeaderList) {
+                        //Path where you want to Extract
+                        zipFile.extractFile(fileHeader, destDir);
+                        System.out.println("Extracted");
+                        System.out.println("This is the key : " + digits);
+                    }
+                }
+            } catch (Exception e) {
+                unzipDecryptPassWithDigits(zipFilePath, destDir, digits-1);
+            }
+        } else {
+            System.out.println("Invalid Digits");
         }
     }
 }
