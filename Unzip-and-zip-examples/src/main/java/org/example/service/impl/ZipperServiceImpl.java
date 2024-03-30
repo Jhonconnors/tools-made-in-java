@@ -79,17 +79,19 @@ public class ZipperServiceImpl implements ZipperService {
     //Only use with numeric keys whose digits you know.
     //This method uses recursion
     @Override
-    public void unzipDecryptPassWithDigits(String zipFilePath, String destDir, Integer digits) {
+    public void unzipDecryptPassWithDigits(String zipFilePath, String destDir, Integer digits, int maxDigits) {
         final FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("N/A", "zip");
         //Folder where zip file is present
         File file = new File(zipFilePath);
         if (digits !=0 || digits ==null){
-            String pass = digits.toString();
+            StringBuilder pass = new StringBuilder(digits.toString());
+            while (pass.length() < maxDigits) pass.insert(0, "0");
+
             try (ZipFile zipFile = new ZipFile(file)) {
                 if (extensionFilter.accept(file)) {
                     if (zipFile.isEncrypted()) {
                         //Your ZIP password
-                        zipFile.setPassword(pass.toCharArray());
+                        zipFile.setPassword(pass.toString().toCharArray());
                     }
                     List<FileHeader> fileHeaderList = zipFile.getFileHeaders();
 
@@ -97,11 +99,11 @@ public class ZipperServiceImpl implements ZipperService {
                         //Path where you want to Extract
                         zipFile.extractFile(fileHeader, destDir);
                         System.out.println("Extracted");
-                        System.out.println("This is the key : " + digits);
                     }
+                    System.out.println("This is the key : " + pass +": \n");
                 }
             } catch (Exception e) {
-                unzipDecryptPassWithDigits(zipFilePath, destDir, digits-1);
+                unzipDecryptPassWithDigits(zipFilePath, destDir, digits-1, maxDigits);
             }
         } else {
             System.out.println("Invalid Digits");

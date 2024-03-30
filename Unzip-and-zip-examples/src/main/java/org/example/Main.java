@@ -11,8 +11,10 @@ public class Main {
 
         zipperService.decompressZip("src/main/resources/example2.zip", "src/main/resources/unzips");
 
-        zipperService.unzipWithPassword("src/main/resources/example3.zip", "src/main/resources/unzips", "1234");
+        zipperService.unzipWithPassword("src/main/resources/example-cero.zip", "src/main/resources/unzips", "0012");
 
-        zipperService.unzipDecryptPassWithDigits("src/main/resources/example.zip", "src/main/resources/unzips", 9999);
+        zipperService.unzipDecryptPassWithDigits("src/main/resources/example3.zip", "src/main/resources/unzips", 9999, 4);
+
+        zipperService.unzipDecryptPassWithDigits("src/main/resources/example-one.zip", "src/main/resources/unzips", 9999, 4);
     }
 }

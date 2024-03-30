@@ -6,5 +6,5 @@ public interface ZipperService {
 
     void unzipWithPassword(String zipFilePath, String destDir, String password);
 
-    void unzipDecryptPassWithDigits(String zipFilePath, String destDir, Integer digits);
+    void unzipDecryptPassWithDigits(String zipFilePath, String destDir, Integer digits, int maxDigits);
 }
